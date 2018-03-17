@@ -29,7 +29,11 @@ class CollectComparisonData(object):
 
 	def get_data(self, callback):
 		"""Get streamed data"""
-		self.get_stream_combined_data(callback).filter(track=self.twitter_keywords)
+		while True: # restart connection if lost
+			try:
+				self.get_stream_combined_data(callback).filter(track=self.twitter_keywords)
+			except Exception: # pylint: disable=W0703
+				pass
 
 	def get_abbrev_data(self, callback):
 		"""Get streamed data and simplify some of it"""
