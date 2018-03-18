@@ -75,7 +75,7 @@ class DataPoint(object):
 		"""returns tweet info in csv format"""
 		return u'"{screen_name}","{text}"'.format(
 			screen_name=self.tweet_data['screen_name'].replace('"', '""'),
-			text=self.tweet_data['text'].replace('"', '""'),
+			text=self.tweet_data['text'].replace('"', '""').replace('\n', '\\n'),
 		)
 
 	def to_csv(self):

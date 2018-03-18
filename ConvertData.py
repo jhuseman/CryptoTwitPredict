@@ -91,6 +91,12 @@ class ConvertData(object):
 		return ret
 
 if __name__ == "__main__":
+	# # DATES = ['Sat_Mar_17_04_50_56_2018', 'Sat_Mar_17_04_52_27_2018', 'Sat_Mar_17_05_51_12_2018',
+	# #   'Sat_Mar_17_05_53_05_2018', 'Sat_Mar_17_06_03_13_2018', 'Sat_Mar_17_06_03_34_2018',
+	# #   'Sat_Mar_17_06_06_50_2018']
+	# # for date in DATES:
+	# # 	ConvertData(in_filename="InitialData_"+date+".txt",
+	# # 	out_filename="InitialData_converted_"+date+".csv")
 	ConvertData()
 	# ConvertData(in_filename="InitialData_Sat_Mar_17_06_15_13_2018.txt",
 	#      out_filename="InitialData_converted_Sat_Mar_17_06_15_13_2018.csv")
