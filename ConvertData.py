@@ -76,6 +76,7 @@ class ConvertData(object):
 
 	def to_csv(self):
 		"""conversion function for exporting to csv format"""
+		to_ret = []
 		ret = ''
 		print "exporting:"
 		prnt_cnt = 0
@@ -93,7 +94,15 @@ class ConvertData(object):
 
 			if item.valid:
 				ret = ret + item.to_csv() + '\n'
+			if len(ret) > 100000:
+				to_ret.append(ret)
+				ret = ''
 		print ""
+		if to_ret:
+			to_ret.append(ret)
+			ret = ''
+			for val in to_ret:
+				ret = ret + val
 		return ret
 
 	def to_dict(self):
