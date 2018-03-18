@@ -3,6 +3,7 @@
 """Conversion functions for data collected earlier"""
 
 import json
+import sys
 from DataPoint import DataPoint
 
 class ConvertData(object):
@@ -59,15 +60,40 @@ class ConvertData(object):
 		"""conversion function for importing from json_linedel format"""
 		if data is None:
 			return
+		print "decoding:"
+		prnt_cnt = 0
+		prnt_tot = len(data.split('\n'))
 		for line in data.split('\n'):
+			sys.stdout.write("\r")
+			sys.stdout.write(str(prnt_cnt))
+			sys.stdout.write("/")
+			sys.stdout.write(str(prnt_tot))
+			sys.stdout.flush()
+			prnt_cnt = prnt_cnt + 1
+
 			self.data_points.append(DataPoint(from_type='json', data=line))
+		print ""
 
 	def to_csv(self):
 		"""conversion function for exporting to csv format"""
 		ret = ''
+		print "exporting:"
+		prnt_cnt = 0
+		prnt_tot = len(self.data_points)
 		for item in self.data_points:
+			sys.stdout.write("\r")
+			sys.stdout.write(str(prnt_cnt))
+			sys.stdout.write("/")
+			sys.stdout.write(str(prnt_tot))
+			sys.stdout.write("    ")
+			sys.stdout.write(str(len(ret)))
+			sys.stdout.write(" bytes")
+			sys.stdout.flush()
+			prnt_cnt = prnt_cnt + 1
+
 			if item.valid:
 				ret = ret + item.to_csv() + '\n'
+		print ""
 		return ret
 
 	def to_dict(self):
