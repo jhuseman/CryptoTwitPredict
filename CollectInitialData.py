@@ -26,7 +26,7 @@ def add_timestamp(dat):
 class CollectInitialData(object):
 	"""CollectInitialData: Collect Data from Twitter and CryptoCompare APIs"""
 	def __init__(self, conn=CollectComparisonData(),
-	      dout=DataOutput(out_filename='InitialData_'+get_fname_timestamp()+'.txt')):
+	      dout=DataOutput(out_filename='data/InitialData_'+get_fname_timestamp()+'.txt')):
 		self.conn = conn
 		self.dout = dout
 
