@@ -8,8 +8,8 @@ from DataPoint import DataPoint
 
 class ConvertData(object):
 	"""Conversion functions for data collected earlier"""
-	def __init__(self, in_filename="InitialData_Sat_Mar_17_06_17_54_2018.txt", in_type="json_linedel",
-	      out_filename="InitialData_converted_Sat_Mar_17_06_17_54_2018.csv", out_type="csv"):
+	def __init__(self, in_filename=None, in_type="json_linedel", out_filename=None, out_type=None,
+	      in_data_raw=None):
 		self.in_filename = in_filename
 		self.out_filename = out_filename
 		self.in_type = in_type
@@ -20,21 +20,28 @@ class ConvertData(object):
 			'json_linedel':self.from_json_linedel,
 			'csv':self.from_csv,
 		}
-		with open(in_filename, 'r') as in_file:
-			in_data = in_file.read().decode('utf8')
+		if not in_filename is None:
+			with open(in_filename, 'r') as in_file:
+				in_data = in_file.read().decode('utf8')
+		else:
+			in_data = in_data_raw
 		if in_type in decoders:
 			decoder = decoders[in_type]
 			decoder(in_data)
-		encoders = {
-			'json':self.to_json,
-			'json_linedel':self.to_json_linedel,
-			'csv':self.to_csv,
-		}
-		if out_type in encoders:
-			encoder = encoders[out_type]
-			out_data = encoder()
-		with open(out_filename, 'w') as out_file:
-			out_file.write(out_data.encode('UTF-8'))
+		if not out_type is None:
+			encoders = {
+				'json':self.to_json,
+				'json_linedel':self.to_json_linedel,
+				'csv':self.to_csv,
+			}
+			if out_type in encoders:
+				encoder = encoders[out_type]
+				out_data = encoder()
+				if out_filename is None:
+					sys.stdout.write(out_data.encode('UTF-8'))
+				else:
+					with open(out_filename, 'w') as out_file:
+						out_file.write(out_data.encode('UTF-8'))
 
 	def from_csv(self, data):
 		"""conversion function for importing from csv format"""
@@ -125,13 +132,34 @@ class ConvertData(object):
 				ret = ret + item.to_json_single_line() + '\n'
 		return ret
 
+def get_kwargs():
+	"""returns the arguments that should be given to the initializer for ConvertData"""
+	infiletype = "json_linedel"
+	infile = None
+	outfiletype = "csv"
+	outfile = None
+
+	if len(sys.argv) > 1:
+		infiletype = sys.argv[1]
+	if len(sys.argv) > 2:
+		infile = sys.argv[2]
+	if len(sys.argv) > 3:
+		outfiletype = sys.argv[3]
+	if len(sys.argv) > 4:
+		outfile = sys.argv[4]
+
+	return {
+		"in_filename":infile,
+		"in_type":infiletype,
+		"out_filename":outfile,
+		"out_type":outfiletype,
+	}
+
 if __name__ == "__main__":
-	# # DATES = ['Sat_Mar_17_04_50_56_2018', 'Sat_Mar_17_04_52_27_2018', 'Sat_Mar_17_05_51_12_2018',
-	# #   'Sat_Mar_17_05_53_05_2018', 'Sat_Mar_17_06_03_13_2018', 'Sat_Mar_17_06_03_34_2018',
-	# #   'Sat_Mar_17_06_06_50_2018']
-	# # for date in DATES:
-	# # 	ConvertData(in_filename="InitialData_"+date+".txt",
-	# # 	out_filename="InitialData_converted_"+date+".csv")
-	ConvertData()
-	# ConvertData(in_filename="InitialData_Sat_Mar_17_06_15_13_2018.txt",
-	#      out_filename="InitialData_converted_Sat_Mar_17_06_15_13_2018.csv")
+	FILEINFO = get_kwargs()
+	ConvertData(
+		out_filename=FILEINFO['out_filename'],
+		out_type=FILEINFO['out_type'],
+		in_filename=FILEINFO['in_filename'],
+		in_type=FILEINFO['in_type'],
+	)
