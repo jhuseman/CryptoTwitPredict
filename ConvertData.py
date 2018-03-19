@@ -33,6 +33,9 @@ class ConvertData(object):
 				'json':self.to_json,
 				'json_linedel':self.to_json_linedel,
 				'csv':self.to_csv,
+				'csv_sent':self.to_csv_sent,
+				'json_sent':self.to_json_sent,
+				'json_sent_linedel':self.to_json_sent_linedel,
 			}
 			if out_type in encoders:
 				encoder = encoders[out_type]
@@ -112,12 +115,51 @@ class ConvertData(object):
 				ret = ret + val
 		return ret
 
+	def to_csv_sent(self):
+		"""conversion function for exporting to csv format with sentiment analysis"""
+		to_ret = []
+		ret = ''
+		print "exporting:"
+		prnt_cnt = 0
+		prnt_tot = len(self.data_points)
+		for item in self.data_points:
+			sys.stdout.write("\r")
+			sys.stdout.write(str(prnt_cnt))
+			sys.stdout.write("/")
+			sys.stdout.write(str(prnt_tot))
+			sys.stdout.write("    ")
+			sys.stdout.write(str(len(ret)))
+			sys.stdout.write(" bytes")
+			sys.stdout.flush()
+			prnt_cnt = prnt_cnt + 1
+
+			if item.valid:
+				ret = ret + item.to_csv_sent() + '\n'
+			if len(ret) > 100000:
+				to_ret.append(ret)
+				ret = ''
+		print ""
+		if to_ret:
+			to_ret.append(ret)
+			ret = ''
+			for val in to_ret:
+				ret = ret + val
+		return ret
+
 	def to_dict(self):
 		"""conversion function for exporting to dict format"""
 		ret = []
 		for item in self.data_points:
 			if item.valid:
 				ret.append(item.to_dict())
+		return ret
+
+	def to_dict_sent(self):
+		"""conversion function for exporting to dict format with sentiment analysis"""
+		ret = []
+		for item in self.data_points:
+			if item.valid:
+				ret.append(item.to_dict_sent())
 		return ret
 
 	def to_json(self):
@@ -130,6 +172,18 @@ class ConvertData(object):
 		for item in self.data_points:
 			if item.valid:
 				ret = ret + item.to_json_single_line() + '\n'
+		return ret
+
+	def to_json_sent(self):
+		"""conversion function for exporting to json format with sentiment analysis"""
+		return json.dumps(self.to_dict(), indent=4)
+
+	def to_json_sent_linedel(self):
+		"""conversion function for exporting to json_linedel format with sentiment analysis"""
+		ret = ''
+		for item in self.data_points:
+			if item.valid:
+				ret = ret + item.to_json_sent_single_line() + '\n'
 		return ret
 
 def get_kwargs():

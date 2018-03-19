@@ -5,6 +5,15 @@
 import csv
 import json
 import time
+from textblob import TextBlob
+
+def analyze_sentiment(text):
+	"""returns the results of sentiment analysis on the given data"""
+	tblob = TextBlob(text)
+	return {
+		'polarity': tblob.sentiment.polarity,
+		'subjectivity': tblob.sentiment.subjectivity,
+	}
 
 class DataPoint(object):
 	"""A data point for the collected data"""
@@ -13,6 +22,7 @@ class DataPoint(object):
 		self.timestamp = None
 		self.prices = {}
 		self.tweet_data = {}
+		self.sentiment = None
 		self.valid = False
 		decoders = {
 			'dict':self.from_dict,
@@ -42,7 +52,12 @@ class DataPoint(object):
 				key = item
 			else:
 				is_key = True
-				self.prices[key] = {self.basis_currency: item}
+				if key in ['polarity', 'subjectivity']:
+					if self.sentiment is None:
+						self.sentiment = {}
+					self.sentiment[key] = item
+				else:
+					self.prices[key] = {self.basis_currency: item}
 
 	def from_dict(self, data):
 		"""conversion function for importing from dict format"""
@@ -52,6 +67,8 @@ class DataPoint(object):
 		self.timestamp = time.strptime(data['time'], '%c')
 		self.prices = data['data']['prices']
 		self.tweet_data = data['data']['tweet']
+		if 'sentiment' in data['data']:
+			self.sentiment = data['data']['sentiment']
 
 	def from_json(self, data):
 		"""conversion function for importing from json format"""
@@ -78,11 +95,29 @@ class DataPoint(object):
 			text=self.tweet_data['text'].replace('"', '""').replace('\n', '\\n'),
 		)
 
+	def get_sent_csv(self):
+		"""returns sentiment analysis info in csv format"""
+		if self.sentiment is None:
+			self.sentiment = analyze_sentiment(self.tweet_data['text'])
+		return 'polarity,{pol},subjectivity,{subj}'.format(
+			pol=self.sentiment['polarity'],
+			subj=self.sentiment['subjectivity'],
+		)
+
 	def to_csv(self):
 		"""conversion function for exporting to csv format"""
 		return u'{timestamp},{tweet_csv},{price_csv}'.format(
 			timestamp=time.asctime(self.timestamp),
 			tweet_csv=self.get_tweet_csv(),
+			price_csv=self.get_price_csv(),
+		)
+
+	def to_csv_sent(self):
+		"""conversion function for exporting to csv format with sentiment analysis"""
+		return u'{timestamp},{tweet_csv},{sent_csv},{price_csv}'.format(
+			timestamp=time.asctime(self.timestamp),
+			tweet_csv=self.get_tweet_csv(),
+			sent_csv=self.get_sent_csv(),
 			price_csv=self.get_price_csv(),
 		)
 
@@ -96,6 +131,19 @@ class DataPoint(object):
 			},
 		}
 
+	def to_dict_sent(self):
+		"""conversion function for exporting to dict format with sentiment analysis"""
+		if self.sentiment is None:
+			self.sentiment = analyze_sentiment(self.tweet_data['text'])
+		return {
+			"time": time.asctime(self.timestamp),
+			"data": {
+				"prices": self.prices,
+				"tweet": self.tweet_data,
+				"sentiment": self.sentiment,
+			},
+		}
+
 	def to_json(self):
 		"""conversion function for exporting to json format"""
 		return json.dumps(self.to_dict(), indent=4)
@@ -103,3 +151,11 @@ class DataPoint(object):
 	def to_json_single_line(self):
 		"""conversion function for exporting to json format in a single line"""
 		return json.dumps(self.to_dict())
+
+	def to_json_sent(self):
+		"""conversion function for exporting to json format with sentiment analysis"""
+		return json.dumps(self.to_dict_sent(), indent=4)
+
+	def to_json_sent_single_line(self):
+		"""conversion function for exporting to json format in a single line with sentiment analysis"""
+		return json.dumps(self.to_dict_sent())
