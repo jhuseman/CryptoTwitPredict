@@ -8,7 +8,7 @@ from DataPoint import DataPoint
 
 class ConvertData(object):
 	"""Conversion functions for data collected earlier"""
-	def __init__(self, in_filename=None, in_type="json_linedel", out_filename=None, out_type=None,
+	def __init__(self, in_filename=None, in_type="jsonl", out_filename=None, out_type=None,
 	      in_data_raw=None):
 		self.in_filename = in_filename
 		self.out_filename = out_filename
@@ -17,7 +17,7 @@ class ConvertData(object):
 		self.data_points = []
 		decoders = {
 			'json':self.from_json,
-			'json_linedel':self.from_json_linedel,
+			'jsonl':self.from_jsonl,
 			'csv':self.from_csv,
 		}
 		if not in_filename is None:
@@ -31,11 +31,11 @@ class ConvertData(object):
 		if not out_type is None:
 			encoders = {
 				'json':self.to_json,
-				'json_linedel':self.to_json_linedel,
+				'jsonl':self.to_jsonl,
 				'csv':self.to_csv,
 				'csv_sent':self.to_csv_sent,
 				'json_sent':self.to_json_sent,
-				'json_sent_linedel':self.to_json_sent_linedel,
+				'jsonl_sent':self.to_jsonl_sent,
 			}
 			if out_type in encoders:
 				encoder = encoders[out_type]
@@ -66,8 +66,8 @@ class ConvertData(object):
 			return
 		self.from_dict(json.loads(data))
 
-	def from_json_linedel(self, data):
-		"""conversion function for importing from json_linedel format"""
+	def from_jsonl(self, data):
+		"""conversion function for importing from jsonl format"""
 		if data is None:
 			return
 		print "decoding:"
@@ -166,8 +166,8 @@ class ConvertData(object):
 		"""conversion function for exporting to json format"""
 		return json.dumps(self.to_dict(), indent=4)
 
-	def to_json_linedel(self):
-		"""conversion function for exporting to json_linedel format"""
+	def to_jsonl(self):
+		"""conversion function for exporting to jsonl format"""
 		ret = ''
 		for item in self.data_points:
 			if item.valid:
@@ -178,8 +178,8 @@ class ConvertData(object):
 		"""conversion function for exporting to json format with sentiment analysis"""
 		return json.dumps(self.to_dict(), indent=4)
 
-	def to_json_sent_linedel(self):
-		"""conversion function for exporting to json_linedel format with sentiment analysis"""
+	def to_jsonl_sent(self):
+		"""conversion function for exporting to jsonl format with sentiment analysis"""
 		ret = ''
 		for item in self.data_points:
 			if item.valid:
@@ -188,7 +188,7 @@ class ConvertData(object):
 
 def get_kwargs():
 	"""returns the arguments that should be given to the initializer for ConvertData"""
-	infiletype = "json_linedel"
+	infiletype = "jsonl"
 	infile = None
 	outfiletype = "csv"
 	outfile = None
