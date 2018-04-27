@@ -10,7 +10,7 @@ $ pip install -r requirements.txt
 
 2. Make a copy of TwitterAuth.json into TwitterAuth_override.json, and add your Twitter API key in the new file.
 
-This file is listed in .gitignore to prevent accidentally uploading the API key (I've had to revoke my key twice already becuase of this mistake)
+This file is listed in .gitignore to prevent accidentally uploading the API key (I've had to revoke my key twice already because of this mistake)
 
 $ cp TwitterAuth.json TwitterAuth_override.json
 

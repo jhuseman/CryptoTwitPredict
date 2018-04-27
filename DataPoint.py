@@ -121,6 +121,64 @@ class DataPoint(object):
 			price_csv=self.get_price_csv(),
 		)
 
+	def get_price_array(self):
+		"""returns price data in array format"""
+		ret = []
+		for key in self.prices:
+			ret.append(self.prices[key][self.basis_currency])
+		return ret
+
+	def get_price_array_key(self):
+		"""returns key for price data in array format"""
+		ret = []
+		for key in self.prices:
+			ret.append(key)
+		return ret
+
+	def get_tweet_array(self):
+		"""returns tweet info in array format"""
+		return [
+			self.tweet_data['screen_name'],
+			self.tweet_data['text'],
+		]
+
+	def get_tweet_array_key(self):
+		"""returnskey for tweet info in array format"""
+		return [
+			'screen_name',
+			'text',
+		]
+
+	def get_sent_array(self):
+		"""returns sentiment analysis info in array format"""
+		if self.sentiment is None:
+			self.sentiment = analyze_sentiment(self.tweet_data['text'])
+		return [
+			self.sentiment['polarity'],
+			self.sentiment['subjectivity'],
+		]
+
+	def get_sent_array_key(self):
+		"""returns key for sentiment analysis info in array format"""
+		return [
+			'polarity',
+			'subjectivity',
+		]
+
+	def to_array_sent(self):
+		"""conversion function for exporting to basic array format with sentiment analysis"""
+		return [time.asctime(self.timestamp), time.mktime(self.timestamp)] \
+		+ self.get_tweet_array() \
+		+ self.get_sent_array() \
+		+ self.get_price_array()
+
+	def to_array_sent_key(self):
+		"""returns the key for array_sent format"""
+		return ['time', 'unixtime'] \
+		+ self.get_tweet_array_key() \
+		+ self.get_sent_array_key() \
+		+ self.get_price_array_key()
+
 	def to_dict(self):
 		"""conversion function for exporting to dict format"""
 		return {
