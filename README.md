@@ -2,7 +2,7 @@
 
 
 
-To collect data:
+# To collect data:
 
 1. install dependencies:
 
@@ -20,11 +20,9 @@ $ vi TwitterAuth_override.json
 
 $ ./CollectInitialData.py
 
--
 
--
 
-To convert between data types:
+# To convert between data types:
 
 1. determine the input data type and output data type:
 
@@ -40,11 +38,9 @@ array_sent_json is an optimized format for plotting in python, as it loads direc
 
 $ ./ConvertData.py [input type] [input file] [output type] [output file]
 
--
 
--
 
-To combine two or more sets of data, simply run the command:
+# To combine two or more sets of data, simply run the command:
 
 $ ./ConcatData.py [in_type in_file] [in_type2 in_file2] [in_type_n in_file_n] ... [out_type out_file]
 
@@ -52,11 +48,9 @@ This script does not properly handle the array_sent_json format, so when concate
 
 $ ./ConcatArrayData.py [in_file1] [in_file2] [in_file_n] ... [out_type]
 
--
 
--
 
-To plot data, run the command:
+# To plot data, run the command:
 
 $ ./PlotData.py [in_type] [in_file]
 
