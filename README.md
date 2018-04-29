@@ -57,3 +57,17 @@ $ ./PlotData.py [in_type] [in_file]
 This converts the data to array_sent_json format and stores it to a file, if it is not already in that format, then plots the data.  Change the keys used in lines 30-32 to plot the data differently.
 
 This is much faster if run with a file already in array_sent_json format.
+
+
+
+
+
+
+
+
+
+
+
+./PlotArrayData.py data/CombinedData_to_Mon_Mar_19_16_15_22_2018at.sent.arr.json unixtime BTC
+
+./AnalyzeAndPlotArrayData.py data/CombinedNoText.arr.json data/Analyzed0.1.arr.json 0.1 unixtime polarity unixtime BTC
