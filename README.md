@@ -66,8 +66,11 @@ This is much faster if run with a file already in array_sent_json format.
 
 
 
+# Miscellaneous commands used to generate graphs
 
+$ ./PlotArrayData.py data/CombinedData_to_Mon_Mar_19_16_15_22_2018at.sent.arr.json unixtime BTC
 
-./PlotArrayData.py data/CombinedData_to_Mon_Mar_19_16_15_22_2018at.sent.arr.json unixtime BTC
+$ ./AnalyzeAndPlotArrayData.py data/CombinedNoText.arr.json data/Analyzed0.1.arr.json 0.1 unixtime polarity unixtime BTC
 
-./AnalyzeAndPlotArrayData.py data/CombinedNoText.arr.json data/Analyzed0.1.arr.json 0.1 unixtime polarity unixtime BTC
+$ ./AnalyzeAndPlotArrayData.py data/CombinedNoText.arr.json data/Analyzed0.2.arr.json 0.2 days polarity days subjectivity days num_records days BTC days ETH
+
