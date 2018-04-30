@@ -58,13 +58,33 @@ This converts the data to array_sent_json format and stores it to a file, if it 
 
 This is much faster if run with a file already in array_sent_json format.
 
+# More data analysis:
 
+The file AnalyzeArrayData.py provides additional data analysis on the data.  There are multiple "versions" of the analysis method kept in the file, in order to still be able to re-create older graphs with new data.  This can be run with the following command:
 
+$ ./AnalyzeArrayData.py [infile] [outfile] [version]
 
+The existing "versions" are:
 
+- 0.0 - does just a copy of the data
 
+- 0.1 - bins and averages the data in large groups
 
+- 0.2 - bins and averages the data across whole days, counting the number of tweets per day
 
+- compress - removes long text data fields, to save on file space
+
+# Plotting data after analysis:
+
+PlotArrayData.py provides a more versatile plotting tool, capable of plotting any pair of numeric axes from an array_json file, and multiple graphs simultaneously.  This can be invoked with the following command:
+
+$ ./PlotArrayData.py [filename] [x_var y_var] [x_var2 y_var2] ...
+
+# Data analysis and plotting simultaneously:
+
+AnalyzeAndPlotData.py can do both the analysis and the plotting simultaneously, to save the time of writing to then reading the file.  it can be invoked with the following command:
+
+$ ./AnalyzeAndPlotArrayData.py [infile] [outfile] [analysis_version] [x_var y_var] [x_var2 y_var2] ...
 
 # Miscellaneous commands used to generate graphs
 
