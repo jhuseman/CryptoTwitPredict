@@ -9,7 +9,7 @@ import json
 import copy
 from PlotData import get_by_keys
 
-CURRENT_VER = '0.1'
+CURRENT_VER = '0.2'
 
 class AnalysisMethods(object):
 	"""Class incorporating different analysis versions"""
@@ -55,12 +55,77 @@ class AnalysisMethods(object):
 			vals = values[i:i+bin_size]
 			polarity_avg = sum([r[0] for r in get_by_keys(['polarity'], keys, vals)])/len(vals)
 			subjectivity_avg = sum([r[0] for r in get_by_keys(['subjectivity'], keys, vals)])/len(vals)
-			ETH_avg = sum([r[0] for r in get_by_keys(['ETH'], keys, vals)])/len(vals)
-			BTC_avg = sum([r[0] for r in get_by_keys(['BTC'], keys, vals)])/len(vals)
+			eth_avg = sum([r[0] for r in get_by_keys(['ETH'], keys, vals)])/len(vals)
+			btc_avg = sum([r[0] for r in get_by_keys(['BTC'], keys, vals)])/len(vals)
 			time_first = get_by_keys(['time'], keys, vals)[0][0]
 			unixtime_first = get_by_keys(['unixtime'], keys, vals)[0][0]
-			ret_values.append([time_first, unixtime_first, polarity_avg, subjectivity_avg, ETH_avg, BTC_avg])
+			ret_values.append([time_first, unixtime_first, polarity_avg, subjectivity_avg, eth_avg, btc_avg])
 			i = i + bin_size
+		return [ret_keys, ret_values]
+
+	def v_0_2(self):
+		"""
+		Version 0.2
+		averages bins of the data, split over ranges of time
+		"""
+		keys = self.array_list[0]
+		values = self.array_list[1]
+		ret_keys = [
+			'time',
+			'unixtime',
+			'days',
+			'num_records',
+			'polarity',
+			'subjectivity',
+			'ETH',
+			'BTC'
+		]
+		ret_values = []
+
+		times = get_by_keys(['unixtime'], keys, values)
+		init_time = times[0][0]
+		prev_time = init_time
+		time_interval = 24*60*60
+		num_vals = len(values)
+		i = 0
+		print "Analyzing..."
+		while i < num_vals:
+			end_time = prev_time + time_interval
+			end_bin = i
+			sys.stdout.write("\r{i}/{n}".format(i=i, n=num_vals))
+			sys.stdout.flush()
+			if times[-1][0] < end_time:
+				vals = values[i:]
+				end_bin = num_vals
+			else:
+				end_bin = [n for n, ind in enumerate(times) if ind[0] > end_time][0]
+				vals = values[i:end_bin]
+			num_records = len(vals)
+			if num_records > 0:
+				polarity_avg = sum([r[0] for r in get_by_keys(['polarity'], keys, vals)])/num_records
+				subjectivity_avg = sum([r[0] for r in get_by_keys(['subjectivity'], keys, vals)])/num_records
+				eth_avg = sum([r[0] for r in get_by_keys(['ETH'], keys, vals)])/num_records
+				btc_avg = sum([r[0] for r in get_by_keys(['BTC'], keys, vals)])/num_records
+				time_first = get_by_keys(['time'], keys, vals)[0][0]
+			else:
+				polarity_avg = 0
+				subjectivity_avg = 0
+				eth_avg = 0
+				btc_avg = 0
+				time_first = ''
+			ret_values.append([
+				time_first,
+				prev_time,
+				(prev_time-init_time)/(24*60*60),
+				num_records,
+				polarity_avg,
+				subjectivity_avg,
+				eth_avg,
+				btc_avg
+			])
+			prev_time = end_time
+			i = end_bin
+		print ""
 		return [ret_keys, ret_values]
 
 def analyze(array_list, version):
