@@ -1,6 +1,6 @@
 # CryptoTwitPredict
 
-
+This repository contains tools for scraping data from Twitter (specifically, tweets related to cryptocurrency), and analyzing that data using sentiment analysis and plotting.  This was created as a project for a Social Sensing course at The University of Notre Dame.
 
 # To collect data:
 
